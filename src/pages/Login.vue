@@ -12,19 +12,24 @@
           </q-card-section>
           <q-card-section>
             <div class="text-center q-pt-lg">
-              <div class="col text-h6 ellipsis">Log in</div>
+              <div class="col text-h6 ellipsis">{{ $t('login') }}</div>
               <div class="col text-h6 ellipsis">{{ user }}</div>
             </div>
           </q-card-section>
           <q-card-section>
             <q-form class="q-gutter-md">
-              <q-input filled v-model="username" label="Username" lazy-rules />
+              <q-input
+                filled
+                v-model="username"
+                :label="$t('username')"
+                lazy-rules
+              />
 
               <q-input
                 type="password"
                 filled
                 v-model="password"
-                label="Password"
+                :label="$t('password')"
                 lazy-rules
               />
 
@@ -45,6 +50,7 @@
 </template>
 
 <script setup lang="ts">
+import { User } from '../types/user';
 import { onMounted, ref, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/mainStore';
@@ -56,25 +62,23 @@ const user = ref('');
 const username = ref('al5');
 const password = ref('1234567890');
 const login = async () => {
-  backApi.userLogin(username.value, password.value).then(async (res) => {
-    console.log(username.value);
-    console.log(password.value);
-    if (res) {
-      user.value = 'successfully LoggedIN';
-      console.log(res);
-      if (await authStore.login(res)) {
-        router.push({
-          name: 'home',
-        });
+  backApi
+    .userLogin(username.value, password.value)
+    .then(async (res: User | null) => {
+      if (res) {
+        user.value = 'successfully LoggedIN'; //dev only
+        if (await authStore.login(res)) {
+          router.push({
+            name: 'home',
+          });
+        }
+      } else {
+        user.value = 'Login failed'; //dev only
       }
-    } else {
-      user.value = 'Login failed';
-    }
-  });
+    });
 };
 onMounted(() => {
-  // console.log(backApi.userLogin('aaa', 'pppp'));
-  // console.log(backApi.t);
+  // console.log();
 });
 </script>
 

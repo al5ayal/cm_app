@@ -1,9 +1,7 @@
 import { app, BrowserWindow, nativeTheme, ipcMain } from 'electron';
 import path from 'path';
 import os from 'os';
-const Op = require('sequelize').Op;
-// const Op = sequelize.Op;
-const User = require('../models').User;
+import { loginUser } from '../controllers/userController';
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
 
@@ -34,41 +32,7 @@ function createWindow() {
   });
   //handling ipcRequests
   ipcMain.handle('login', async (event, loginData) => {
-    // make login here
-    // bring the model then find where
-    // const User = db.user;
-    // console.log(Op);
-    // console.log(User);
-    // return;
-    // const user = await User.findOne({ where: { user_name: loginData.login } });
-    const user = await User.findOne({
-      where: {
-        [Op.and]: [
-          {
-            [Op.or]: [
-              { user_name: loginData.login },
-              { email: loginData.login },
-            ],
-          },
-          { password: loginData.password },
-        ],
-        // [Op.or]: [{ a: 5 }, { b: 6 }],
-      },
-    });
-    if (user && user.password == loginData.password) {
-      // return user;
-      return {
-        full_name: user.full_name,
-        email: user.email,
-        usert_name: user.user_name,
-        user_group: user.user_group_id,
-      };
-    } else {
-      console.log('invalid login creds');
-      return null;
-    }
-
-    // if not null return the user data
+    return loginUser(loginData);
   });
   mainWindow.loadURL(process.env.APP_URL);
   mainWindow.webContents.openDevTools();

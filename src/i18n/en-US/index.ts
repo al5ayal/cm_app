@@ -3,5 +3,13 @@
 
 export default {
   failed: 'Action failed',
-  success: 'Action was successful'
+  success: 'Action was successful',
+  AppName: 'MyCourses',
+  language: 'Language',
+  english: 'English',
+  arabic: 'Arabic',
+  langChangeDesc: 'Change language',
+  username: 'UserName',
+  password: 'Password',
+  login: 'Log In',
 };

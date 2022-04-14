@@ -1,5 +1,7 @@
 import enUS from './en-US';
+import arEG from './ar-EG';
 
 export default {
-  'en-US': enUS
+  'en-US': enUS,
+  ar: arEG,
 };
