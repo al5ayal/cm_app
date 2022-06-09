@@ -11,6 +11,7 @@ export interface StudentsTableColumn {
 export interface StudentRequest {
   name: string;
   phone: string;
+  nid?: number;
   email: string;
   age?: number;
   address?: string;

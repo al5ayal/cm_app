@@ -8,7 +8,7 @@
     />
     <CoursesTable
       v-if="!loading"
-      :title="$t('cohorts')"
+      :title="$t('courses')"
       :data="courses"
       @update="getCourses"
     />

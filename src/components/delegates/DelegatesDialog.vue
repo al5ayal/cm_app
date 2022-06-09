@@ -45,7 +45,11 @@
         </q-bar>
 
         <q-card-section>
-          <p>{{ errors }}</p>
+          <p class="text-red">
+            <span v-for="(error, index) in errors" :key="index">
+              <span v-for="(msg, index) in error" :key="index">{{ msg }}</span>
+            </span>
+          </p>
         </q-card-section>
 
         <q-card-section class="q-pt-none">
@@ -60,6 +64,7 @@
                   lazy-rules
                   :rules="[
                     (val) => (val && val.length > 0) || $t('cannot_be_empty'),
+                    (val) => val.length >= 3 || 'لا يجب ان يقل عن 3 أحرف',
                   ]"
                 />
               </div>
@@ -76,7 +81,7 @@
                         val.match(
                           /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
                         )) ||
-                      $t('invalidPhoneNumber'),
+                      'رقم الهاتف غير صحيح',
                   ]"
                   lazy-rules
                 />
@@ -97,12 +102,25 @@
                 <q-input
                   filled
                   type="text"
+                  v-model="formData.nid"
+                  label="رقم الهوية"
+                  lazy-rules
+                  :rules="[
+                    (val) =>
+                      /^(\s*|\d+)$/.test(val) || 'رقم الهوية مكون من أرقام فقط',
+                  ]"
+                />
+              </div>
+            </div>
+            <!-- row -->
+            <div class="row justify-around q-col-gutter-sm">
+              <div class="col-12">
+                <q-input
+                  filled
+                  type="text"
                   v-model="formData.address"
                   :label="$t('address')"
                   lazy-rules
-                  :rules="[
-                    (val) => (val && val.length > 0) || 'Please type something',
-                  ]"
                 />
               </div>
             </div>
@@ -120,7 +138,7 @@
                   :label="$t('commission_type')"
                   lazy-rules
                   :rules="[
-                    (val) => (val && val.length > 0) || 'Please type something',
+                    (val) => (val && val.length > 0) || 'تأكد من صحة البيانات',
                   ]"
                 />
               </div>
@@ -133,9 +151,7 @@
                   v-model="formData.commission_amount"
                   :label="$t('commission_amount')"
                   lazy-rules
-                  :rules="[
-                    (val) => (val && val.length > 0) || 'Please type something',
-                  ]"
+                  :rules="[(val) => (!!val && val !== 0) || 'نسبة غير صحيحة']"
                 />
               </div>
             </div>
@@ -181,12 +197,13 @@ const commission_types = [
   { name: t('amount'), value: '+' },
 ];
 // const delegategroups = ref([]);
-const errors = ref('');
+const errors = ref(null);
 
 const formData = ref<Delegate>({
   id: props.delegate?.id,
   name: props.delegate?.name,
   phone: props.delegate?.phone,
+  nid: props.delegate?.nid ?? 0,
   email: props.delegate?.email,
   address: props.delegate?.address,
   commission_type: props.delegate?.commission_type ?? '%',
@@ -208,7 +225,7 @@ function onSubmit() {
         }
       })
       .catch((err: AxiosError) => {
-        errors.value = JSON.stringify(err?.response?.data);
+        errors.value = err?.response?.data;
         loading.value = false;
       });
   } else {
@@ -221,7 +238,7 @@ function onSubmit() {
         }
       })
       .catch((err: AxiosError) => {
-        errors.value = JSON.stringify(err?.response?.data);
+        errors.value = err?.response?.data;
         loading.value = false;
       });
   }

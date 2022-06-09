@@ -8,7 +8,7 @@
           </div>
           <q-space />
           <q-btn
-            :label="$t('addCohort')"
+            label="إضافة مقرر جديد"
             class="float-right text-capitalize text-indigo-8 shadow-3"
             icon="person"
             @click="addDialog = true"

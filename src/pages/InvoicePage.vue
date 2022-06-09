@@ -58,34 +58,38 @@
                 </q-item-section>
               </q-item>
 
-              <q-item class="text-weight-bold">
+              <q-item>
                 <q-item-section>
                   <q-item-label>
-                    {{ $t('phone') + ' ' + $t('AppPhone') }}
+                    <span class="text-weight-bold">الهاتف :</span>
+                    {{ $t('AppPhone') }}
                   </q-item-label>
                 </q-item-section>
               </q-item>
 
-              <q-item class="text-weight-bold">
+              <q-item>
                 <q-item-section>
                   <q-item-label>
-                    {{ $t('cr') + ' ' + $t('AppCR') }}
+                    <span class="text-weight-bold">السجل التجاري:</span>
+                    {{ $t('AppCR') }}
                   </q-item-label>
                 </q-item-section>
               </q-item>
 
-              <q-item class="text-weight-bold">
+              <q-item>
                 <q-item-section>
                   <q-item-label>
-                    {{ $t('vatNum') + ' ' + $t('AppVat') }}
+                    <span class="text-weight-bold">الرقم الضريبي:</span>
+                    {{ $t('AppVat') }}
                   </q-item-label>
                 </q-item-section>
               </q-item>
 
-              <q-item class="text-weight-bold">
+              <q-item class="">
                 <q-item-section>
                   <q-item-label>
-                    {{ $t('address') + ': ' + $t('AppAddress') }}
+                    <span class="text-weight-bold">العنوان:</span>
+                    {{ $t('AppAddress') }}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -94,6 +98,7 @@
           <div class="col-4 text-center self-center">
             <!-- <q-icon name="school" size="7rem" color="primary" /> -->
             <q-icon name="img:icon.png" size="7rem" color="primary" />
+            <p class="text-center">فاتورة اجل</p>
           </div>
           <div class="col-4 text-right">
             <q-list dense class="q-pa-none">
@@ -119,10 +124,11 @@
                 </q-item-section>
               </q-item>
 
-              <q-item class="text-weight-bold">
+              <q-item class="">
                 <q-item-section>
                   <q-item-label>
-                    Address: Ahmad Al Attas, Al Zahra, Jeddah
+                    <span class="text-weight-bold">Address:</span> Ahmad Al
+                    Attas, Al Zahra, Jeddah
                   </q-item-label>
                 </q-item-section>
               </q-item>

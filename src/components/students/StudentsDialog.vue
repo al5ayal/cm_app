@@ -45,8 +45,11 @@
         </q-bar>
 
         <q-card-section>
-          <div class="text-h6">{{ $t('data') }}</div>
-          <p>{{ errors }}</p>
+          <p class="text-red">
+            <span v-for="(error, index) in errors" :key="index">
+              <span v-for="(msg, index) in error" :key="index">{{ msg }}</span>
+            </span>
+          </p>
         </q-card-section>
 
         <q-card-section class="q-pt-none">
@@ -71,10 +74,7 @@
                   v-model="formData.age"
                   :label="$t('age') + ` *`"
                   lazy-rules
-                  :rules="[
-                    (val) =>
-                      (val !== null && val !== '') || $t('cannot_be_empty'),
-                  ]"
+                  :rules="[(val) => !!val || 'العمر مطلوب']"
                 />
               </div>
             </div>
@@ -88,8 +88,32 @@
                   :label="$t('phone')"
                   :hint="$t('phone')"
                   lazy-rules
+                  :rules="[
+                    (val) =>
+                      (val &&
+                        val.match(
+                          /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
+                        )) ||
+                      'رقم الهاتف غير صحيح',
+                  ]"
                 />
               </div>
+              <div class="col-sm-6 col-12">
+                <q-input
+                  filled
+                  type="text"
+                  v-model="formData.nid"
+                  label="رقم الهوية"
+                  lazy-rules
+                  :rules="[
+                    (val) =>
+                      /^(\s*|\d+)$/.test(val) || 'رقم الهوية مكون من أرقام فقط',
+                  ]"
+                />
+              </div>
+            </div>
+            <!-- row -->
+            <div class="row justify-around q-col-gutter-sm">
               <div class="col-sm-6 col-12">
                 <q-input
                   filled
@@ -99,10 +123,7 @@
                   lazy-rules
                 />
               </div>
-            </div>
-            <!-- row -->
-            <div class="row justify-around q-col-gutter-sm">
-              <div class="col-12">
+              <div class="col-sm-6 col-12">
                 <q-input
                   filled
                   type="text"
@@ -110,9 +131,7 @@
                   :label="$t('address')"
                   :hint="$t('address')"
                   lazy-rules
-                  :rules="[
-                    (val) => (val && val.length > 0) || 'Please type something',
-                  ]"
+                  :rules="[(val) => !!val || 'العنوان مطلوب']"
                 />
               </div>
             </div>
@@ -160,11 +179,12 @@ const emit = defineEmits(['close', 'saved']);
 const dialog = ref(props.dialog);
 const maximizedToggle = ref(false);
 // const studentgroups = ref([]);
-const errors = ref('');
+const errors = ref(null);
 
 const formData = ref<StudentRequest>({
   name: props.student?.name,
   phone: props.student?.phone,
+  nid: props.student?.nid ?? 0,
   email: props.student?.email,
   age: props.student?.age,
   address: props.student?.address,
@@ -184,7 +204,7 @@ function onSubmit() {
         }
       })
       .catch((err: AxiosError) => {
-        errors.value = JSON.stringify(err?.response?.data);
+        errors.value = err?.response?.data;
       });
   } else {
     api
@@ -195,7 +215,7 @@ function onSubmit() {
         }
       })
       .catch((err: AxiosError) => {
-        errors.value = JSON.stringify(err?.response?.data);
+        errors.value = err?.response?.data;
       });
   }
 }

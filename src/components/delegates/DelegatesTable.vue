@@ -12,7 +12,20 @@
       </div>
     </q-card-section>
     <q-card-section class="q-pa-none">
-      <q-table :rows="props.data" :columns="columns()" row-key="id">
+      <q-table
+        :rows="tableData"
+        :columns="columns()"
+        row-key="id"
+        :loading="loading"
+        :pagination="{ rowsPerPage: 10 }"
+      >
+        <template v-slot:top-left>
+          <q-input type="search" v-model="filter" placeholder="بحث">
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </template>
         <template v-slot:body-cell-status="props">
           <q-td :props="props">
             <div>
@@ -72,7 +85,7 @@
 <script setup lang="ts">
 import { User } from '../../interfaces/user';
 import { TableColumn } from '../../interfaces/TableColumn';
-import { inject, ref } from 'vue';
+import { inject, ref, watch } from 'vue';
 import DelegatesDialog from './DelegatesDialog.vue';
 import { useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
@@ -88,6 +101,10 @@ const props = defineProps({
   title: String,
   data: Array,
 });
+
+const loading = ref(false);
+const filter = ref('');
+const tableData = ref(props.data);
 
 function editDelegate(user: User) {
   selectedDelegate.value = user;
@@ -143,6 +160,32 @@ function deleteDelegate(id: number, name: string) {
   });
 }
 
+watch(filter, (vale) => {
+  search(vale);
+});
+
+function search(txt: string) {
+  loading.value = true;
+  //filter and search
+  if (!txt.length) {
+    tableData.value = props.data;
+    loading.value = false;
+  }
+  if (filter.value.length >= 3) {
+    api
+      ?.get(`/delegates/find?txt=${txt}`)
+      .then((res: AxiosResponse) => {
+        tableData.value = res.data;
+        loading.value = false;
+        // console.log(res.data);
+      })
+      .catch((err: AxiosError) => {
+        console.error(err?.response?.data);
+        loading.value = false;
+      });
+  }
+}
+
 const columns = (): Array<TableColumn> => [
   {
     name: 'id',
@@ -155,6 +198,13 @@ const columns = (): Array<TableColumn> => [
     name: 'name',
     label: t('name'),
     field: 'name',
+    sortable: true,
+    align: 'left',
+  },
+  {
+    name: 'nid',
+    label: 'رقم الهوية',
+    field: 'nid',
     sortable: true,
     align: 'left',
   },

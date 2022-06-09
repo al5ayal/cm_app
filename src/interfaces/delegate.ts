@@ -2,6 +2,7 @@ export interface Delegate {
   id: number;
   name: string;
   phone: string;
+  nid?: number;
   email: string;
   commission_type: string;
   commission_amount: number;

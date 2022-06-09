@@ -192,7 +192,7 @@
 
 <script setup lang="ts">
 import { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
-import { useQuasar } from 'quasar';
+import { date, useQuasar } from 'quasar';
 import { Cohort } from 'src/interfaces/orders';
 import { inject, onBeforeMount, ref } from 'vue';
 // import { useRouter } from 'vue-router';
@@ -237,8 +237,11 @@ const formData = ref<Cohort>({
   description: props.cohort?.description,
   price: props.cohort?.price,
   course_id: props.cohort?.course_id,
-  start_date: props.cohort?.start_date ?? '2022-05-20',
-  end_date: props.cohort?.start_date ?? '2022-05-20',
+  start_date:
+    props.cohort?.start_date ?? date.formatDate(Date.now(), 'YYYY-MM-DD'),
+  end_date:
+    props.cohort?.start_date ??
+    date.formatDate(date.addToDate(Date.now(), { month: 1 }), 'YYYY-MM-DD'),
 });
 
 function onSubmit() {

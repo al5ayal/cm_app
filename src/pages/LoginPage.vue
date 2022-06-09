@@ -40,8 +40,6 @@
                 :rules="[
                   (val) => !!val || 'ادخل البريد الإلكتروني أو اسم المستخدم',
                 ]"
-                error-message="ادخل البريد الإلكتروني أو اسم المستخدم"
-                :error="!!loginError?.errors?.email"
               />
 
               <q-input
@@ -53,10 +51,8 @@
                 :rules="[
                   (val) => !!val || 'أدخل كلمة المرور',
                   (val) =>
-                    val.length >= 5 || 'كلمة المرور لا تقل عن 8 حروف أو ارقام',
+                    val.length >= 8 || 'كلمة المرور لا تقل عن 8 حروف أو ارقام',
                 ]"
-                error-message="أدخل كلمة المرور صحيحة"
-                :error="!!loginError?.errors?.password"
               />
 
               <div>
