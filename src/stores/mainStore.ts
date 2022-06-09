@@ -1,42 +1,41 @@
-import { User } from './../types/user';
+// import { Delegate } from './../interfaces/delegate';
+import { UserData } from '../interfaces/user';
 import { defineStore } from 'pinia';
 import { useI18n } from 'vue-i18n';
 
 export const useAuthStore = defineStore('authStore', {
   state: () => ({
     user: localStorage.getItem('user')
-      ? JSON.parse(localStorage.getItem('user') ?? '{}')
+      ? JSON.parse(localStorage.getItem('user') ?? '')
       : null,
+    network_error: false,
   }),
   getters: {
     // user: () => JSON.parse(localStorage.getItem("user")),
   },
   actions: {
-    login: async function (user: User | null) {
+    login: async function (user: UserData | null) {
       try {
-        // this.user = await api.post({ login, password });
-        // showTooltip(`Welcome back ${this.userData.name}!`);
-        localStorage.setItem('user', JSON.stringify({ user })); //suppose to be user data
+        localStorage.setItem('user', JSON.stringify(user)); //suppose to be user data
 
         this.user = user ?? null; //will be user data
         return true;
       } catch (error) {
-        // showTooltip(error);
-        // let the form component display the error
         return await error;
       }
     },
-    logout: async function () {
+    logout: async function (): Promise<boolean | string> {
       try {
-        console.error('loging out');
+        // console.error('loging out');
         localStorage.removeItem('user'); //suppose to be user data
 
         this.user = null; //will be user data
         return true;
-      } catch (error) {
+      } catch (error: unknown) {
         // showTooltip(error);
         // let the form component display the error
-        return await error;
+        // console.log(error);
+        return 'error logging out';
       }
     },
   },
@@ -49,7 +48,10 @@ export const useAuthStore = defineStore('authStore', {
 export const useAppStore = defineStore('appStore', {
   state: () => {
     return {
-      locale: localStorage.getItem('userLang') ?? 'ar',
+      locale: 'ar',
+      failContent: false,
+      currentDelegate: undefined,
+      taxRatio: 0.15,
     };
   },
   actions: {

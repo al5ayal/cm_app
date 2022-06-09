@@ -2,6 +2,8 @@
   "extends": "@quasar/app-webpack/tsconfig-preset",
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "ES5"
-  }
+    "target": "ES5",
+    "lib": ["ES6", "DOM"]
+  },
+  "exclude": ["node_modules", ".quasar", ".vscode"]
 }

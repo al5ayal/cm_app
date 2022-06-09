@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hHh Lpr fFf">
     <q-header elevated>
       <q-toolbar>
         <q-btn
@@ -15,27 +15,28 @@
           {{ $t('AppName') }}
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <!-- <div>version: 0.0.1</div> -->
+        <q-btn
+          flat
+          dense
+          round
+          icon="settings"
+          aria-label="Menu"
+          @click="() => (drawerOpen = !drawerOpen)"
+        />
       </q-toolbar>
     </q-header>
 
     <q-drawer v-model="drawerOpen" show-if-above bordered>
       <q-list>
         <q-item-label header> {{ $t('mainMenu') }}</q-item-label>
-
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
-
-        <q-item>
+        <MainMenuItems />
+        <!-- <q-item>
           <q-item-section avatar>
             <q-icon name="language" />
           </q-item-section>
 
           <q-item-section>
-            <!-- <q-item-label>{{ $t('language') }}</q-item-label> -->
             <q-select
               v-model="lang"
               :options="langOptions"
@@ -48,7 +49,7 @@
               style="min-width: 150px"
             />
           </q-item-section>
-        </q-item>
+        </q-item> -->
 
         <q-item clickable @click="logout()">
           <q-item-section avatar>
@@ -63,108 +64,122 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <router-view v-if="!appStore.failContent" />
+      <content-not-found v-else />
     </q-page-container>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
-import EssentialLink from 'components/EssentialLink.vue';
-import { useQuasar } from 'quasar';
-import languages from 'quasar/lang/index.json';
+import { inject, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useAuthStore } from '../stores/mainStore';
+import { QSpinnerGears, useQuasar, useMeta, QSpinnerFacebook } from 'quasar';
+import { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
+import MainMenuItems from '../components/MainMenuItems.vue';
+import ContentNotFound from '../components/ContentNotFound.vue';
+// import languages from 'quasar/lang/index.json';
+import { useAuthStore, useAppStore } from '../stores/mainStore';
 import { useRouter } from 'vue-router';
+// import ExpandNavLink from 'src/components/ExpandNavLink.vue';
+
 const authStore = useAuthStore();
+const appStore = useAppStore();
 const $q = useQuasar();
-const lang = ref(localStorage.getItem('userLang'));
+// const lang = ref(localStorage.getItem('userLang')); //should ref the store
 const drawerOpen = ref(false);
 const i18n = useI18n();
+const api: AxiosInstance | undefined = inject('api');
 
-const appLanguages = languages.filter((lang) => {
-  return ['ar', 'en-US'].includes(lang.isoName);
-});
+// const appLanguages = languages.filter((lang) => {
+//   return ['ar', 'en-US'].includes(lang.isoName);
+// });
 
-const langOptions = appLanguages.map((lang) => ({
-  label: lang.nativeName,
-  value: lang.isoName,
-}));
+// const langOptions = appLanguages.map((lang) => ({
+//   label: lang.nativeName,
+//   value: lang.isoName,
+// }));
 
 const router = useRouter();
 async function logout() {
-  if (await authStore.logout()) {
-    router.push({
-      name: 'login',
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: 'red',
+    spinnerSize: 140,
+    backgroundColor: 'blue',
+    message: 'جاري تسجيل الخروج ,فضلا إنتظر',
+    messageColor: 'black',
+  });
+
+  api
+    ?.post('logout')
+    .then(async (res: AxiosResponse) => {
+      // console.log(res);
+      if (res.status == 200) {
+        const loggedout = await authStore.logout();
+        if (loggedout) {
+          router.push({
+            name: 'login',
+          });
+          $q.loading.hide();
+        }
+      }
+    })
+    .catch((err: AxiosError) => {
+      console.log(err.response?.status);
+      $q.loading.hide();
     });
-  }
 }
-onMounted(() => {
-  import('quasar/lang/' + lang.value).then((lang) => {
-    $q.lang.set(lang.default);
-  });
-});
-watch(lang, (val) => {
-  import('quasar/lang/' + val).then((lang) => {
-    $q.lang.set(lang.default);
-  });
 
-  i18n.locale.value = lang.value == 'ar' ? 'ar' : 'en-US';
+watch(
+  () => authStore.network_error,
+  (val) => {
+    if (val) {
+      $q.loading.show({
+        spinner: QSpinnerGears,
+        spinnerColor: 'red',
+        messageColor: 'black',
+        backgroundColor: 'yellow',
+        html: true,
+        message:
+          i18n.t('netError') +
+          `<br> <br> <button class="q-btn q-btn-item non-selectable no-outline q-btn--standard q-btn--rectangle bg-secondary text-white q-btn--actionable q-focusable q-hoverable q-btn--active" tabindex="0" type="button" onclick="location.reload()"><span class="q-focus-helper"></span><span class="q-btn__content text-center col items-center q-anchor--skip justify-center row"><span class="block">${i18n.t(
+            'reload'
+          )}</span><i class="q-icon on-right notranslate material-icons" aria-hidden="true" role="img">replay</i></span></button>`,
+      });
+    } else {
+      $q.loading.hide();
+    }
+  }
+);
 
-  localStorage.setItem('userLang', i18n.locale.value);
-});
+const metaData = {
+  // sets document title
+  title: i18n.t('AppName'),
+  // optional; sets final title as "Index Page - My Website", useful for multiple level meta
+  titleTemplate: (title: string) => title,
 
-// function changeLang(locale: string) {
-//   i18n.locale.value = locale;
+  // meta tags
+  meta: {
+    description: { name: 'description', content: 'Page 1' },
+    keywords: { name: 'keywords', content: 'Quasar website' },
+    equiv: {
+      'http-equiv': 'Content-Type',
+      content: 'text/html; charset=UTF-8',
+    },
+    // note: for Open Graph type metadata you will need to use SSR, to ensure page is rendered by the server
+    ogTitle: {
+      property: 'og:title',
+      // optional; similar to titleTemplate, but allows templating with other meta properties
+      template(ogTitle: string) {
+        return `${ogTitle} - ${metaData.title}`;
+      },
+    },
+  },
 
-//   localStorage.setItem('userLang', locale);
-//   // appStore.changeLang(locale);
-//   //workign needs to be in store or not since it`s global
-//   // but for sure needs to be in the localstorage
-//   // there is useLocalStorage from '@vueuse/localStorage'
-// }
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
+  // <noscript> tags
+  noscript: {
+    default: 'Your browser is not supported',
   },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev',
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
-  },
-];
+};
+useMeta(metaData);
 </script>

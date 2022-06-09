@@ -30,7 +30,7 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-webpack/boot-files
-    boot: ['main', 'i18n'],
+    boot: ['main', 'i18n', 'axios'],
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-css
     css: ['app.scss'],
@@ -89,7 +89,7 @@ module.exports = configure(function (ctx) {
       config: {},
 
       // iconSet: 'material-icons', // Quasar icon set
-      // lang: 'en-US', // Quasar language pack
+      lang: 'ar', // Quasar language pack
 
       // For special cases outside of where the auto-import strategy can have an impact
       // (like functional components as one of the examples),
@@ -99,7 +99,7 @@ module.exports = configure(function (ctx) {
       // directives: [],
 
       // Quasar plugins
-      plugins: [],
+      plugins: ['Notify', 'Loading', 'Dialog', 'Meta'],
     },
 
     // animations: 'all', // --- includes all animations
@@ -135,11 +135,15 @@ module.exports = configure(function (ctx) {
       // for the custom service worker ONLY (/src-pwa/custom-service-worker.[js|ts])
       // if using workbox in InjectManifest mode
       // chainWebpackCustomSW (/* chain */) {},
+      extendGenerateSWOptions(cfg) {
+        cfg.skipWaiting = false;
+        cfg.clientsClaim = false;
+      },
 
       manifest: {
-        name: 'com.alkhayal.cm_app',
-        short_name: 'com.alkhayal.cm_app',
-        description: '',
+        name: 'FastTrack.cm_app',
+        short_name: 'FastTrack',
+        description: 'FastTrack Institute',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',
