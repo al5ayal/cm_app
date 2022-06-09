@@ -1,10 +1,22 @@
 <template>
   <q-card>
     <q-card-section class="q-pa-none">
-      <q-table dense :rows="props.data" :columns="columns()" row-key="name">
+      <q-table
+        dense
+        :rows="tableData"
+        :columns="columns()"
+        row-key="name"
+        :loading="loading"
+        :pagination="{ rowsPerPage: 10 }"
+      >
         <template v-slot:top>
           <div class="text-h6 text-grey-8">
             {{ props.title }}
+            <q-input type="search" v-model="filter" placeholder="بحث">
+              <template v-slot:append>
+                <q-icon name="search" />
+              </template>
+            </q-input>
           </div>
           <q-space />
           <q-btn
@@ -14,7 +26,6 @@
             @click="addDialog = true"
           />
         </template>
-
         <template v-slot:body-cell-status="props">
           <q-td :props="props">
             <div>
@@ -67,7 +78,7 @@
 <script setup lang="ts">
 import { Cohort } from '../../interfaces/orders';
 import { TableColumn } from '../../interfaces/TableColumn';
-import { inject, ref } from 'vue';
+import { inject, ref, watch } from 'vue';
 import CohortsDialog from './CohortsDialog.vue';
 import { useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
@@ -84,6 +95,10 @@ const props = defineProps({
   data: Array,
   cols: [],
 });
+
+const loading = ref(false);
+const filter = ref('');
+const tableData = ref(props.data);
 
 function editUser(cohort: Cohort) {
   selectedCohort.value = cohort;
@@ -139,6 +154,31 @@ function deleteUser(id: number, name: string) {
   });
 }
 
+watch(filter, (vale) => {
+  search(vale);
+});
+
+function search(txt: string) {
+  loading.value = true;
+  //filter and search
+  if (!txt.length) {
+    tableData.value = props.data;
+    loading.value = false;
+  }
+  if (filter.value.length >= 3) {
+    api
+      ?.get(`/cohorts/find?txt=${txt}`)
+      .then((res: AxiosResponse) => {
+        tableData.value = res.data;
+        loading.value = false;
+        // console.log(res.data);
+      })
+      .catch((err: AxiosError) => {
+        console.error(err?.response?.data);
+        loading.value = false;
+      });
+  }
+}
 const columns = (): Array<TableColumn> => [
   {
     name: 'index',
