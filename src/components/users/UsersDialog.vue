@@ -45,8 +45,11 @@
         </q-bar>
 
         <q-card-section>
-          <div class="text-h6">{{ $t('data') }}</div>
-          <p>{{ errors }}</p>
+          <p class="text-red">
+            <span v-for="(error, index) in errors" :key="index">
+              <span v-for="(msg, index) in error" :key="index">{{ msg }}</span>
+            </span>
+          </p>
         </q-card-section>
 
         <q-card-section class="q-pt-none">
@@ -87,6 +90,11 @@
                   :label="$t('password')"
                   :hint="$t('password')"
                   lazy-rules
+                  :rules="[
+                    (val) =>
+                      val.length >= 8 ||
+                      'كلمة المرور لا تقل عن 8 أحرف أو ارقام',
+                  ]"
                 />
               </div>
               <div class="col-sm-6 col-12">
@@ -113,7 +121,8 @@
                   :hint="$t('email')"
                   lazy-rules
                   :rules="[
-                    (val) => (val && val.length > 0) || 'Please type something',
+                    (val) =>
+                      (val && val.length > 0) || 'لا يمكن ترك البريد فارغا',
                   ]"
                 />
               </div>
@@ -128,7 +137,7 @@
                   option-label="name"
                   emit-value
                   map-options
-                  label="Label"
+                  label="مجموعة المستخدم"
                 />
               </div>
             </div>
@@ -182,7 +191,7 @@ const dialog = ref(props.dialog);
 const maximizedToggle = ref(false);
 const loading = ref(false);
 const usergroups = ref([]);
-const errors = ref('');
+const errors = ref([]);
 
 onMounted(() => {
   api
@@ -213,26 +222,6 @@ const formData = ref<UserRequest>({
 
 function onSubmit() {
   //check type then decide
-  // let url = 'users/create/';
-  // if (props.type == 'edit') {
-  //   if (formData.value.password == '' || !formData.value.password?.length) {
-  //     delete formData.value.password;
-  //     delete formData.value.password_confirmation;
-  //   }
-  //   url = 'users/update/' + props.user?.id;
-  // }
-
-  // api
-  //   ?.post(url, formData.value)
-  //   .then((res: AxiosResponse) => {
-  //     console.log(res.data);
-  //     emit('saved', res.data);
-  //   })
-  //   .catch((err: AxiosError) => {
-  //     console.error(err?.response?.data);
-  //     errors.value = JSON.stringify(err?.response?.data);
-  //   });
-  //data submit
 
   loading.value = true;
   let url = 'users';
@@ -251,7 +240,7 @@ function onSubmit() {
         }
       })
       .catch((err: AxiosError) => {
-        errors.value = JSON.stringify(err?.response?.data);
+        errors.value = err?.response?.data;
         loading.value = false;
       });
   } else {
@@ -264,7 +253,7 @@ function onSubmit() {
         }
       })
       .catch((err: AxiosError) => {
-        errors.value = JSON.stringify(err?.response?.data);
+        errors.value = err?.response?.data;
         loading.value = false;
       });
   }

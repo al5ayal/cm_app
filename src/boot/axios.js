@@ -1,7 +1,7 @@
 import { boot } from 'quasar/wrappers';
 import axios from 'axios';
 import { useAuthStore, useAppStore } from '../stores/mainStore';
-
+// import { Cookies } from 'quasar';
 let headers = {
   Accept: 'application/json',
   'Content-Type': 'application/json',
@@ -12,9 +12,9 @@ let headers = {
 //should pass token from here one
 
 const api = axios.create({
-  // baseURL: '/cm_api/public/api/', //fro remote host
+  baseURL: '/cm_api/public/api/', //fro remote host
   // baseURL: 'https://al5ayal.com/fasttrack/public/api/', //fro remote host
-  baseURL: 'http://192.168.100.13:8000/api/',
+  // baseURL: 'http://192.168.100.13:8000/api/',
   withCredentials: true,
   crossDomain: true,
   headers,
@@ -40,6 +40,16 @@ export default boot(({ app, router }) => {
         //   router.push('/login');
         // }
       }
+      //get token csrf and set it on header if it`s post request
+
+      // const csrf = Cookies.get('fasttrack_institute_session');
+      // console.log(csrf);
+      // config.headers.common['X-XSRF-TOKEN'] = csrf;
+      // if (config.method == 'post') {
+      //   axios.get('/sanctum/csrf-cookie').then((response) => {
+      //     // Login...
+      //   });
+      // }
       // console.error('not good token');
       return config;
     },
