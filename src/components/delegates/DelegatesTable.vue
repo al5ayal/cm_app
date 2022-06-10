@@ -85,7 +85,7 @@
 <script setup lang="ts">
 import { User } from '../../interfaces/user';
 import { TableColumn } from '../../interfaces/TableColumn';
-import { inject, ref, watch } from 'vue';
+import { inject, onUpdated, ref, watch } from 'vue';
 import DelegatesDialog from './DelegatesDialog.vue';
 import { useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
@@ -185,6 +185,10 @@ function search(txt: string) {
       });
   }
 }
+
+onUpdated(() => {
+  tableData.value = props.data;
+});
 
 const columns = (): Array<TableColumn> => [
   {

@@ -78,7 +78,7 @@
 <script setup lang="ts">
 import { Cohort } from '../../interfaces/orders';
 import { TableColumn } from '../../interfaces/TableColumn';
-import { inject, ref, watch } from 'vue';
+import { inject, onUpdated, ref, watch } from 'vue';
 import CohortsDialog from './CohortsDialog.vue';
 import { useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
@@ -179,6 +179,11 @@ function search(txt: string) {
       });
   }
 }
+
+onUpdated(() => {
+  tableData.value = props.data;
+});
+
 const columns = (): Array<TableColumn> => [
   {
     name: 'index',

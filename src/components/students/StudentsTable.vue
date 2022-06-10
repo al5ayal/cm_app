@@ -84,7 +84,7 @@
 
 <script setup lang="ts">
 import { User } from '../../interfaces/user';
-import { inject, ref, watch } from 'vue';
+import { inject, onUpdated, ref, watch } from 'vue';
 import StudentsDialog from './StudentsDialog.vue';
 import { useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
@@ -186,6 +186,10 @@ function search(txt: string) {
       });
   }
 }
+
+onUpdated(() => {
+  tableData.value = props.data;
+});
 
 const columns = (): Array<TableColumn> => [
   {
