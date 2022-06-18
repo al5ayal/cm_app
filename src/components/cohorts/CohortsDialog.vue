@@ -51,7 +51,7 @@
         <q-card-section class="q-pt-none">
           <q-form @submit="onSubmit" class="q-gutter-md">
             <div class="row justify-around q-col-gutter-sm">
-              <div class="col-sm-6 col-12">
+              <div class="col-sm-4 col-12">
                 <q-input
                   filled
                   v-model="formData.name"
@@ -62,15 +62,27 @@
                   ]"
                 />
               </div>
-              <div class="col-sm-6 col-12">
+              <div class="col-sm-4 col-12">
+                <q-input
+                  filled
+                  lang="en"
+                  step="0.01"
+                  type="number"
+                  v-model="priceWithTax"
+                  label="السعر شامل الضريبة"
+                  lazy-rules
+                />
+              </div>
+              <div class="col-sm-4 col-12">
                 <q-input
                   filled
                   lang="en"
                   step="0.01"
                   type="number"
                   v-model="formData.price"
-                  :label="$t('price')"
+                  label="السعر قبل الضريبة"
                   lazy-rules
+                  :disable="true"
                 />
               </div>
             </div>
@@ -194,7 +206,7 @@
 import { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { date, useQuasar } from 'quasar';
 import { Cohort } from 'src/interfaces/orders';
-import { inject, onBeforeMount, ref } from 'vue';
+import { inject, onBeforeMount, ref, watch } from 'vue';
 // import { useRouter } from 'vue-router';
 const $q = useQuasar();
 const api: AxiosInstance | undefined = inject('api');
@@ -209,6 +221,7 @@ const dialog = ref(props.dialog);
 const maximizedToggle = ref(false);
 const courses = ref([]);
 const errors = ref('');
+const priceWithTax = ref(Number((props.cohort?.price * 1.15).toFixed(2)));
 
 onBeforeMount(() => {
   $q.loading.show({
@@ -242,6 +255,13 @@ const formData = ref<Cohort>({
   end_date:
     props.cohort?.start_date ??
     date.formatDate(date.addToDate(Date.now(), { month: 1 }), 'YYYY-MM-DD'),
+});
+
+watch(priceWithTax, (val) => {
+  if (!val) {
+    return;
+  }
+  formData.value.price = Number((Number(val) / 1.15).toFixed(2));
 });
 
 function onSubmit() {
