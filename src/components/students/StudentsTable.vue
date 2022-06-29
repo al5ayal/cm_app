@@ -228,9 +228,9 @@ const columns = (): Array<TableColumn> => [
     align: 'left',
   },
   {
-    name: 'Age',
-    label: t('age'),
-    field: 'age',
+    name: 'qualification',
+    label: 'المؤهل',
+    field: 'qualification',
     sortable: true,
     align: 'left',
   },

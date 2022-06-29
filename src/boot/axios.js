@@ -12,9 +12,10 @@ let headers = {
 //should pass token from here one
 
 const api = axios.create({
-  baseURL: '/cm_api/public/api/', //fro remote host
+  // baseURL: '/cm_api/public/api/', //fro remote host
   // baseURL: 'https://al5ayal.com/fasttrack/public/api/', //fro remote host
   // baseURL: 'http://192.168.100.13:8000/api/',
+  baseURL: 'http://localhost:8000/api/',
   withCredentials: true,
   crossDomain: true,
   headers,

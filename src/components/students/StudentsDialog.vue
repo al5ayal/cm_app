@@ -70,11 +70,10 @@
               <div class="col-sm-6 col-12">
                 <q-input
                   filled
-                  type="number"
-                  v-model="formData.age"
-                  :label="$t('age') + ` *`"
+                  type="text"
+                  v-model="formData.qualification"
+                  label="المؤهل"
                   lazy-rules
-                  :rules="[(val) => !!val || 'العمر مطلوب']"
                 />
               </div>
             </div>
@@ -113,7 +112,7 @@
               </div>
             </div>
             <!-- row -->
-            <div class="row justify-around q-col-gutter-sm">
+            <div class="row justify-start q-col-gutter-sm">
               <div class="col-sm-6 col-12">
                 <q-input
                   filled
@@ -121,17 +120,6 @@
                   v-model="formData.email"
                   :label="$t('email')"
                   lazy-rules
-                />
-              </div>
-              <div class="col-sm-6 col-12">
-                <q-input
-                  filled
-                  type="text"
-                  v-model="formData.address"
-                  :label="$t('address')"
-                  :hint="$t('address')"
-                  lazy-rules
-                  :rules="[(val) => !!val || 'العنوان مطلوب']"
                 />
               </div>
             </div>
@@ -186,8 +174,7 @@ const formData = ref<StudentRequest>({
   phone: props.student?.phone,
   nid: props.student?.nid ?? 0,
   email: props.student?.email,
-  age: props.student?.age,
-  address: props.student?.address,
+  qualification: props.student?.age,
   active: props.student?.active ?? 0,
 });
 

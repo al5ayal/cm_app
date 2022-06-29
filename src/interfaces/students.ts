@@ -13,6 +13,7 @@ export interface StudentRequest {
   phone: string;
   nid?: number;
   email: string;
+  qualification?: string;
   age?: number;
   address?: string;
   active: boolean;
@@ -23,6 +24,7 @@ export interface Student {
   name: string;
   phone: string;
   email: string;
+  qualification?: string;
   age?: string;
   address?: string;
   created_at?: Date;

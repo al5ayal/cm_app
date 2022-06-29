@@ -26,13 +26,10 @@
             {{ $t('phone') + ': ' + student?.phone }}
           </div>
           <div class="col-4">
+            {{ 'المؤهل' + ': ' + student?.qualification }}
+          </div>
+          <div class="col-4">
             {{ $t('email') + ': ' + student?.email }}
-          </div>
-          <div class="col-4">
-            {{ $t('age') + ': ' + student?.age }}
-          </div>
-          <div class="col-4">
-            {{ $t('address') + ': ' + student?.address }}
           </div>
           <div class="col-4">
             {{ $t('joindate') + ': ' + student?.created_at }}
@@ -166,7 +163,11 @@
       </q-card-section>
       <q-separator />
       <q-card-section>
-        <orders-table :orders="student?.orders" :title="$t('supscriptions')" />
+        <orders-table
+          :orders="student?.orders"
+          :title="$t('supscriptions')"
+          @update="saved"
+        />
       </q-card-section>
       <q-separator />
     </q-card>

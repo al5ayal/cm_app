@@ -92,7 +92,7 @@
                   lazy-rules
                   :rules="[
                     (val) =>
-                      val.length >= 8 ||
+                      (props.type !== 'edit' && val.length >= 8) ||
                       'كلمة المرور لا تقل عن 8 أحرف أو ارقام',
                   ]"
                 />
@@ -105,7 +105,9 @@
                   :label="$t('confirmpassword')"
                   lazy-rules
                   :rules="[
-                    (val) => val == formData.password || $t('passwordnotmatch'),
+                    (val) =>
+                      (props.type !== 'edit' && val == formData.password) ||
+                      'كلمة المرور غير متطابقة',
                   ]"
                 />
               </div>
@@ -216,7 +218,7 @@ const formData = ref<UserRequest>({
   email: props.user?.email,
   password: '',
   password_confirmation: '',
-  user_group_id: props.user?.user_group_id ?? 2,
+  user_group_id: props.user?.user_group_id ?? 1,
   status: props.user?.status ?? 0,
 });
 

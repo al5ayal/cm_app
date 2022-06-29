@@ -4,7 +4,7 @@
       <div class="text-h6 text-grey-8">
         {{ props.title }}
         <q-btn
-          :label="$t('addGroup')"
+          label="اضافة مجموعة جديدة"
           class="float-right text-capitalize text-indigo-8 shadow-3"
           icon="person"
           @click="addDialog = true"

@@ -197,7 +197,11 @@
               <q-item>
                 <q-item-section>
                   <q-item-label>
-                    {{ $t('address') + ': ' + order?.student?.address }}
+                    {{
+                      $t('address') +
+                      ': ' +
+                      (order?.student?.address ?? '.............')
+                    }}
                   </q-item-label>
                 </q-item-section>
               </q-item>
