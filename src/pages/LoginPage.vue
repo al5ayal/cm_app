@@ -55,8 +55,8 @@
                 ]"
               />
 
-              <div>
-                <q-btn label="Login" type="submit" color="primary" />
+              <div class="text-center">
+                <q-btn label="تسجيل الدخول" type="submit" color="primary" />
               </div>
             </q-form>
           </q-card-section>

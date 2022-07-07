@@ -1,7 +1,7 @@
 <template>
   <q-table
     :class="'bg-' + props.bg"
-    :dense="$q.screen.lt.md"
+    dense
     :title="props.title"
     :rows="props.reports"
     :columns="(columns as  Array<any>)"
@@ -28,9 +28,7 @@ const props = defineProps({
     type: String,
     default: 'فواتير مستحقة الدفع',
   },
-  reports: {
-    type: Array,
-  },
+  reports: Array,
   bg: {
     type: String,
     default: '',

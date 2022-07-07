@@ -174,7 +174,7 @@ const formData = ref<StudentRequest>({
   phone: props.student?.phone,
   nid: props.student?.nid ?? 0,
   email: props.student?.email,
-  qualification: props.student?.age,
+  qualification: props.student?.qualification,
   active: props.student?.active ?? 0,
 });
 

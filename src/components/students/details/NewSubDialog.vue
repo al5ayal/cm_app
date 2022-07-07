@@ -100,8 +100,11 @@
                   :label="$t('dueDate')"
                   v-model="formData.due_date"
                   placeholder="dd-mm-yyyy"
-                  min="2022-01-01"
-                  max="2030-12-31"
+                  :min="minDate"
+                  :rules="[
+                    (val) => !!val || 'من فضلك حدد تاريخ الاستحقاق',
+                    (val) => date.getDateDiff( date.extractDate(val as string, 'YYYY-MM-DD'), new Date(), 'days') >= 0 || 'تاريخ الاستحقاق لابد أن يكون أكبر أو مساو على الاقل لتاريخ اليوم',
+                  ]"
                 />
               </div>
             </div>
@@ -146,8 +149,10 @@ import { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { Delegate } from '../../../interfaces/delegate';
 import { Cohort, OrderRequest } from '../../../interfaces/orders';
 import OrderItemsTable from './OrderItemsTable.vue';
+import { date } from 'quasar';
 // import { studentouter } from 'vue-router';
 const api: AxiosInstance | undefined = inject('api');
+
 // const router = studentouter();
 const props = defineProps({
   dialog: Boolean,
@@ -163,7 +168,7 @@ const errors = ref<Record<string, string>>({});
 const selectedCohort = ref<Cohort>();
 const cohorts = ref<Array<Cohort>>([]);
 const delegates = ref<Array<Delegate>>([]);
-
+const minDate = date.formatDate(new Date(), 'YYYY-MM-DD');
 const formData = ref<OrderRequest>({
   student_id: Number(props?.student_id),
   type: 'new',
@@ -171,7 +176,7 @@ const formData = ref<OrderRequest>({
   delegate_id: null,
   tax: 0,
   total_amount: 0,
-  due_date: '2022-05-20',
+  due_date: minDate,
   details: [],
 });
 
@@ -198,7 +203,7 @@ function addToMenu() {
   };
 
   formData?.value?.details?.push(item);
-  formData.value.due_date = selectedCohort?.value?.end_date as string;
+  // formData.value.due_date = selectedCohort?.value?.end_date.toDateString();
   selectedCohort.value = undefined;
 }
 watch(formData.value, () => {
@@ -213,7 +218,6 @@ watch(formData.value, () => {
       ?.reduce((total, item) => total + Number(item.total_amount), 0)
       .toFixed(2)
   );
-  // console.log('watcher data changed');
 });
 
 function removeItem(index: number) {
@@ -233,7 +237,7 @@ onMounted(() => {
       }
     })
     .catch((err: AxiosError) => {
-      errors.value = JSON.stringify(err?.response?.data);
+      errors.value = err?.response?.data;
     });
   //get cohorts list
   api
@@ -244,7 +248,7 @@ onMounted(() => {
       }
     })
     .catch((err: AxiosError) => {
-      errors.value = JSON.stringify(err?.response?.data);
+      errors.value = err?.response?.data;
     });
 });
 function onSubmit() {

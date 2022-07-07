@@ -172,6 +172,7 @@
           title="فواتير مستحقة/متأخرة الدفع"
           bg="red-2"
           :reports="(reports?.lateDue as Array<any>)"
+          key="lateDue"
         />
       </div>
     </div>
@@ -182,6 +183,7 @@
           title="فواتير يستحق سدادها خلال قبل 7 أيام"
           bg="yellow-2"
           :reports="(reports?.dueWithinWeek as Array<any>)"
+          key="dueWithinWeek"
         />
       </div>
     </div>
